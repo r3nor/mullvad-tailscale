@@ -3,19 +3,20 @@ define RESOLVER_ADDRS = {
 }
 
 define EXCLUDED_IPS = {
-    <100.EX.AMP.LE>,
-    <100.EX.AMP.LE2>
+    100.200.300.400,
+    100.500.600.700
 }
 
 define EXCLUDED_IPV6 = {
-    <fd7a:115c:a1e0:exam:ple:add:ress:bf04>,
-    <fd7a:115c:a1e0:exam:ple:add:ress:6951>
+    exam:ple:change:exam:ple:add:ress:bf04,
+    exam:ple:change:exam:ple:add:ress:6951
 }
 
 table inet mullvad-ts {
   chain excludeOutgoing {
     type route hook output priority 0; policy accept;
     ip daddr $EXCLUDED_IPS ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
+    ip6 daddr $EXCLUDED_IPV6 ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
   }
 
   chain allow-incoming {
