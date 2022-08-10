@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Requires: mullvad (cli) and nftables
+
+
+set -euo pipefail
+
+CONFIGS_DIR=$HOME/LINUX/VPN
+RUNTIME_CONFIG=$XDG_RUNTIME_DIR/mullvad.conf
+
+mullvad relay update
+MULLVAD_RELAYS=( $(mullvad relay list | grep 'wireguard' | awk '{ print $1 }') )
+
+# Pick a random country code.
+size=${#MULLVAD_RELAYS[@]}
+index=$(($RANDOM % $size))
+relay=${MULLVAD_RELAYS[$index]}
+
+usage() {
+    echo "usage:"
+    echo "  $(basename "$0") up"
+    echo "  $(basename "$0") upc <2-char country code>"
+    echo "  $(basename "$0") down"
+    exit 1
+}
+
+if [ $# -lt 1 ]; then
+    usage
+fi
+
+case "$1" in
+    "upc")
+        if [ $# -ne 2 ]; then
+            usage
+        fi
+
+        echo "NOT IMPLEMENTED..."
+        ;;
+
+    "down")
+        mullvad disconnect
+        sudo nft delete table inet mullvad-ts
+        ;;
+
+    "up")
+        sudo tailscale down
+
+        echo "Applying ntf rules..."
+        sudo nft -f /home/kenny/LINUX/VPN/mullvad.rules
+
+        echo "Connecting to server $relay..."
+        mullvad relay set hostname $relay
+        mullvad connect -w
+        mullvad dns set default
+
+        echo "Connecting to tailscale..."
+        sudo tailscale up
+    ;;
+
+    *)
+        usage
+esac
+
