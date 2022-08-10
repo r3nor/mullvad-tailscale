@@ -4,6 +4,8 @@ This is a simple script that allows you to run MullvadVPN along with Tailscale.
 
 The script will connect you to a random available Mullvad server. I will also implement the option to connect to a certain country in a near future.
 
+The script is named `mtc` as per `Mullvad Tailscale Connect`
+
 ## Usage
 
 1. Clone this repo:
@@ -42,4 +44,10 @@ mullvad account set 1234123412341234
 
 ```bash
 ./mtc up
+```
+
+or
+
+```bash
+bash mtc up
 ```
