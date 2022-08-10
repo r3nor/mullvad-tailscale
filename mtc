@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-CONFIGS_DIR=$HOME/LINUX/VPN
+SCRIPT_DIR=$HOME/LINUX/VPN
 
 # List of countr codes to exclude from connection
 # If you don't want to exclude any CC set it to '(0)'
@@ -50,7 +50,7 @@ case "$1" in
         sudo tailscale down
 
         echo "Applying ntf rules..."
-        sudo nft -f /home/kenny/LINUX/VPN/mullvad.rules
+        sudo nft -f $SCRIPT_DIR/mullvad.rules
 
         echo "Connecting to server $relay..."
         mullvad relay set hostname $relay
