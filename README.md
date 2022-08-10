@@ -44,7 +44,7 @@ mullvad account set 1234123412341234
 
 6. Edit the `mullvad.rules` file:
 
-> Set your Tailscale IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). Set the IPv6 IPs in `EXCLUDED_IPV6`. Finally set your Tailscale DNS resolver in `RESOLVER_ADDRS
+> Set your Tailscale IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). Set the IPv6 IPs in `EXCLUDED_IPV6`. Finally set your Tailscale DNS resolver in `RESOLVER_ADDRS`
 
 7. Run the script:
 
