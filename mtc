@@ -6,7 +6,6 @@
 set -euo pipefail
 
 CONFIGS_DIR=$HOME/LINUX/VPN
-RUNTIME_CONFIG=$XDG_RUNTIME_DIR/mullvad.conf
 
 mullvad relay update
 MULLVAD_RELAYS=( $(mullvad relay list | grep 'wireguard' | awk '{ print $1 }') )
