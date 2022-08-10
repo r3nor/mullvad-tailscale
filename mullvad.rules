@@ -1,0 +1,31 @@
+define RESOLVER_ADDRS = {
+  100.100.100.100
+}
+
+define EXCLUDED_IPS = {
+    <100.EX.AMP.LE>,
+    <100.EX.AMP.LE2>
+}
+
+define EXCLUDED_IPV6 = {
+    <fd7a:115c:a1e0:exam:ple:add:ress:bf04>,
+    <fd7a:115c:a1e0:exam:ple:add:ress:6951>
+}
+
+table inet mullvad-ts {
+  chain excludeOutgoing {
+    type route hook output priority 0; policy accept;
+    ip daddr $EXCLUDED_IPS ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
+  }
+
+  chain allow-incoming {
+    type filter hook input priority -100; policy accept;
+    iifname "tailscale0" ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
+  }
+
+  chain excludeDns {
+    type filter hook output priority -10; policy accept;
+    ip daddr $RESOLVER_ADDRS udp dport 53 ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
+    ip daddr $RESOLVER_ADDRS tcp dport 53 ct mark set 0x00000f41 meta mark set 0x6d6f6c65;
+  }
+}
