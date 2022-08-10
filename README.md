@@ -10,7 +10,9 @@ The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was ins
 
 You should [install mullvad](https://mullvad.net/download/) in your system so you have the [mullvad cli](https://mullvad.net/en/help/how-use-mullvad-cli/) command available.
 
-You will also neeed `nftables
+You will also neeed `nftables` package installed.
+
+---
 
 1. Clone this repo:
 
