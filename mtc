@@ -23,7 +23,7 @@ relay=${MULLVAD_RELAYS[$index]}
 usage() {
     echo "usage:"
     echo "  $(basename "$0") up"
-    echo "  $(basename "$0") upc <2-char country code>"
+    # echo "  $(basename "$0") upc <2-char country code>"
     echo "  $(basename "$0") down"
     exit 1
 }
