@@ -108,6 +108,10 @@ case "$1" in
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
         mullvad dns set custom $DNS
         mullvad relay set hostname $relay
+        
+        # Setup connection, disconnect and reconnect with proper resolv.conf
+        mullvad connect -w
+        mullvad disconnect
         mullvad connect -w
     ;;
 
