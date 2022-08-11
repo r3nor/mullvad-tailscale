@@ -65,7 +65,7 @@ case "$1" in
         ;;
 
     "up")
-        bash $0 down -a
+        bash $0 down -a || echo "[INFO] Ignoring error..."
         OPTIND=2
         ram=false      
         while getopts ":r :h :d:" opt; do
