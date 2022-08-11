@@ -2,12 +2,14 @@
 
 # Requires: mullvad (cli), nftables and tailscale
 
-
-set -euo pipefail
-
+# Config Variables you should change
+# vvvvvvvv
 SCRIPT_DIR=$HOME/LINUX/VPN
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)'
-DNS='default'
+# 
+
+set -euo pipefail
+DNS='default' # Don't change this. See mtc up -h for more info.
 
 usage() {
     echo "usage:"
