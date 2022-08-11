@@ -15,7 +15,7 @@ You will also neeed `nftables` package installed.
 Finally, you need `tailscale` with its proper setup.
 
 
-## Installation
+## Setup
 
 1. Clone this repo:
 
