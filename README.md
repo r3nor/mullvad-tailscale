@@ -52,7 +52,7 @@ chmod 700 mtc
 
 - Set your Tailscale network IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). 
 - Set your Tailscale network IPv6 IPs in the `EXCLUDED_IPV6` variable (you can use CDIR notation). 
-- Set your Tailscale DNS resolver in `RESOLVER_ADDRS`
+- Set your Tailscale DNS resolver in `RESOLVER_ADDRS` (Should be `100.100.100.100`)
 
 6. Setup your Mullvad account if you haven't done it yet:
 
