@@ -2,9 +2,20 @@
 
 This is a simple script that allows you to run MullvadVPN along with Tailscale. 
 
-The script will connect you to a random available Mullvad server. I will also implement the option to connect to a certain country in a near future.
+The script will connect you to a random available Mullvad server.
 
 The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was inspired by [this gist](https://gist.github.com/1player/e9cadfef833d5eb5a23c30223f560147) although it now has been completely rewritten.
+
+### Features
+
+- [x] See uage and help
+- [x] Bring up Tailscale + Mullvad with a random server
+- [x] Blacklist countries to avoid connecting
+- [x] Only use [RAM only servers](https://mullvad.net/en/blog/2022/8/1/expanding-diskless-infrastructure-to-more-locations-system-transparency-stboot/) (diskless)
+- [x] Set custom DNS server for Mullvad
+- [x] Bring down Mullvad VPN and remove nftables entries.
+- [x] Bring down all (tailscale+mullvad+nftables)
+- [x] Update the relay list at stratup
 
 ## Requirements
 
