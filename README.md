@@ -56,8 +56,8 @@ mullvad account set 1234123412341234
   - To see help: `bash mtc`
   - To start mullvad+tailscale: `bash mtc up`
     - To start mullvad+tailscale with RAM servers only: `bash mtc up -r`
-    - To change de default DNS (9.9.9.9) for Mullvad: `bash mtc up -d 1.1.1.1`
-    - You can apply all options: `bash mtc up -r -d 8.8.8.8`
+    - To set a custom DNS for Mullvad: `bash mtc up -d 1.1.1.1`
+    - You can apply all options at once: `bash mtc up -r -d 8.8.8.8`
   - To stop mullvad (not tailscale): `bash mtc down`
     - To stop all (tailscale included): `bash mtc down -a`
 
