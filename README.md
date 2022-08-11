@@ -46,7 +46,7 @@ chmod 700 mtc
 
 4. Inspect and **edit** the script file (`mtc`):
 
-- Change the `SCRIPT_DIR` variable to point to the folder where the `mullvad.rules` file is located.
+- Change the `RULES_DIR` variable to point to the folder where the `mullvad.rules` file is located.
 
 - Modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you don't want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
 
