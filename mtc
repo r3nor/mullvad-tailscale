@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$HOME/LINUX/VPN
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)'
-DNS='9.9.9.9'
+DNS='default'
 
 usage() {
     echo "usage:"
@@ -21,7 +21,7 @@ upusage() {
     echo "usage: "
     echo "mtc up [-OPTIONS]:"
     echo "  -r: No-disk/RAM only relays (default: all servers)"
-    echo "  -d: Mullvad DNS Server (default 9.9.9.9)"
+    echo "  -d: Set custom Mullvad DNS Server"
     exit 1
 }
 
@@ -65,6 +65,7 @@ case "$1" in
         ;;
 
     "up")
+        bash $0 down -a
         OPTIND=2
         ram=false      
         while getopts ":r :h :d:" opt; do
@@ -106,10 +107,12 @@ case "$1" in
 
         echo "[INFO] Connecting to server $relay..."
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
-        mullvad dns set custom $DNS
+        if [ $DNS = "default" ] ; then
+            mullvad dns set default
+        else
+            mullvad dns set custom $DNS
+        fi
         mullvad relay set hostname $relay
-        
-        # Setup connection, disconnect and reconnect with proper resolv.conf
         mullvad connect -w
         mullvad disconnect
         mullvad connect -w
@@ -118,3 +121,4 @@ case "$1" in
     *)
         usage
 esac
+
