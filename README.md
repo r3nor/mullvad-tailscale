@@ -42,33 +42,35 @@ git clone https://github.com/r3nor/mullvad-tailscale
 chmod 700 mtc
 ```
 
-4. Inspect and **edit** the script file:
+4. Inspect and **edit** the script file (`mtc`):
 
-You should change the `SCRIPT_DIR` variable to point to the folder where the `mullvad.rules` file is located.
+- Change the `SCRIPT_DIR` variable to point to the folder where the `mullvad.rules` file is located.
 
-You can also modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you don't want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
+- Modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you don't want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
 
-```bash
-nano mtc
-```
+5. Edit the `mullvad.rules` file:
 
-5. Set Mullvad account:
+- Set your Tailscale network IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). 
+- Set your Tailscale network IPv6 IPs in the `EXCLUDED_IPV6` variable (you can use CDIR notation). 
+- Set your Tailscale DNS resolver in `RESOLVER_ADDRS`
+
+6. Setup your Mullvad account if you haven't done it yet:
 
 ```bash
 mullvad account set 1234123412341234
 ```
 
-6. Edit the `mullvad.rules` file:
-
-> Set your Tailscale IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). Set the IPv6 IPs in `EXCLUDED_IPV6`. Finally set your Tailscale DNS resolver in `RESOLVER_ADDRS`
-
 ## Usage
 
-  - To see help: `bash mtc`
+> You must be inside the directory where the script is located, or use it with the absolute path to it. If you want to run the command without specifying the folder where it is located, add the script directory to your PATH variable.
+
+  - To see usage help: `bash mtc`
   - To start mullvad+tailscale: `bash mtc up`
+    - See `up` help: `bash mtc up -h`
     - To start mullvad+tailscale with RAM servers only: `bash mtc up -r`
     - To set a custom DNS for Mullvad: `bash mtc up -d 1.1.1.1`
     - You can apply all options at once: `bash mtc up -r -d 8.8.8.8`
   - To stop mullvad (not tailscale): `bash mtc down`
+    - See `down` help: `bash mtc down -h`
     - To stop all (tailscale included): `bash mtc down -a`
 
