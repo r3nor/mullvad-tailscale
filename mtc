@@ -4,8 +4,8 @@
 
 # ---------------------------
 # CONFIG VARIABLES YOU SHOULD CHANGE
-SCRIPT_DIR=$HOME/LINUX/VPN
-EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)'
+RULES_DIR=$HOME/LINUX/VPN # Path to where mullvad.rules file is located
+EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid
 # ----------------------------
 
 set -euo pipefail
@@ -105,7 +105,7 @@ case "$1" in
         sudo tailscale up
 
         echo "[INFO] Applying ntf rules..."
-        sudo nft -f $SCRIPT_DIR/mullvad.rules
+        sudo nft -f $RULES_DIR/mullvad.rules
 
         echo "[INFO] Connecting to server $relay..."
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
