@@ -15,7 +15,7 @@ You will also neeed `nftables` package installed.
 Finally, you need `tailscale` with its proper setup.
 
 
-## Usage
+## Installation
 
 1. Clone this repo:
 
@@ -51,9 +51,9 @@ mullvad account set 1234123412341234
 
 > Set your Tailscale IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). Set the IPv6 IPs in `EXCLUDED_IPV6`. Finally set your Tailscale DNS resolver in `RESOLVER_ADDRS`
 
-7. Run the script:
+## Usage
 
-  - To see usage: `bash mtc`
+  - To see help: `bash mtc`
   - To start mullvad+tailscale: `bash mtc up`
     - To start mullvad+tailscale with RAM servers only: `bash mtc up -r`
     - To change de default DNS (9.9.9.9) for Mullvad: `bash mtc up -d 1.1.1.1`
