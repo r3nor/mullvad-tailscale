@@ -13,7 +13,7 @@ SCRIPT_DIR=$HOME/LINUX/VPN
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)'
 
 mullvad relay update
-MULLVAD_RELAYS=( $(mullvad relay list | grep 'wireguard' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
+MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg|beta)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
 
 # Pick a random country code.
 size=${#MULLVAD_RELAYS[@]}
