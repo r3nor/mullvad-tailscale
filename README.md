@@ -34,6 +34,8 @@ Finally, you need `tailscale` with its proper setup.
 git clone https://github.com/r3nor/mullvad-tailscale
 ```
 
+> Or download and extract the latest release source from [releases page](https://github.com/r3nor/mullvad-tailscale/releases).
+
 2. Go to cloned dir: `cd mullvad-tailscale`
 
 3. Set execution permissions on script:
