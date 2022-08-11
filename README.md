@@ -50,12 +50,6 @@ mullvad account set 1234123412341234
 
 7. Run the script:
 
-```bash
-./mtc up
-```
-
-or
-
-```bash
-bash mtc up
-```
+  - To see usage: `bash mtc`
+  - To start mullvad+tailscale: `bash mtc up`
+  - To stop mullvad (not tailscale): `bash mtc down`
