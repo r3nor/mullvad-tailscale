@@ -31,7 +31,7 @@ git clone https://github.com/r3nor/mullvad-tailscale
 chmod 700 mtc
 ```
 
-4. Inspect and edit the script:
+4. Inspect and **edit** the script file:
 
 You should change the `SCRIPT_DIR` variable to point to the folder where the `mullvad.rules` file is located.
 
