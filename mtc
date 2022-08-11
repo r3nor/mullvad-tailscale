@@ -11,9 +11,9 @@ DNS='9.9.9.9'
 
 usage() {
     echo "usage:"
-    echo "  $(basename "$0") up"
+    echo "  $(basename "$0") up (use -h for more info)"
     #echo "  $(basename "$0") upc <2-char country code>"
-    echo "  $(basename "$0") down"
+    echo "  $(basename "$0") down (use -h for more info)"
     exit 1
 }
 
