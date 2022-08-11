@@ -1,30 +1,34 @@
 #!/bin/bash
 
-# Requires: mullvad (cli) and nftables
+# Requires: mullvad (cli), nftables and tailscale
 
 
 set -euo pipefail
 
 SCRIPT_DIR=$HOME/LINUX/VPN
-
-# List of countr codes to exclude from connection
-# If you don't want to exclude any CC set it to '(0)'
-# If you want to add more, just follow the pattern.
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)'
-
-mullvad relay update
-MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg|beta)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
-
-# Pick a random country code.
-size=${#MULLVAD_RELAYS[@]}
-index=$(($RANDOM % $size))
-relay=${MULLVAD_RELAYS[$index]}
+DNS='9.9.9.9'
 
 usage() {
     echo "usage:"
     echo "  $(basename "$0") up"
-    # echo "  $(basename "$0") upc <2-char country code>"
+    #echo "  $(basename "$0") upc <2-char country code>"
     echo "  $(basename "$0") down"
+    exit 1
+}
+
+upusage() {
+    echo "usage: "
+    echo "mtc up [-OPTIONS]:"
+    echo "  -r: No-disk/RAM only relays (default: all servers)"
+    echo "  -d: Mullvad DNS Server (default 9.9.9.9)"
+    exit 1
+}
+
+downusage() {
+    echo "usage: "
+    echo "mtc down [-OPTIONS]:"
+    echo "  -a: Stop Mullvad and Tailscale (default: only stop Mullvad)"
     exit 1
 }
 
@@ -42,26 +46,71 @@ case "$1" in
         ;;
 
     "down")
+        OPTIND=2   
+        while getopts ":a :h" opt; do
+            case $opt in
+                a) sudo tailscale down ;;
+                h) downusage ;;
+                \?) 
+                    echo "[ERROR] WRONG OPTION"
+                    echo ""
+                    downusage
+                    exit 1
+                ;;
+            esac
+        done
+
         mullvad disconnect
         sudo nft delete table inet mullvad-ts
         ;;
 
     "up")
+        OPTIND=2
+        ram=false      
+        while getopts ":r :h :d:" opt; do
+            case $opt in
+                r) ram=true ;;
+                d) DNS=$OPTARG ;;
+                h) 
+                    upusage
+                    exit
+                ;;
+                \?) 
+                    echo "[ERROR] WRONG OPTION"
+                    echo ""
+                    upusage
+                    exit 1
+                ;;
+            esac
+        done
+
+        mullvad relay update
+        if [ $ram = true ] ; then
+            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg|beta)' | grep -E '(de-fra|hk-hkg|jp-tyo|es-mad|got|sto|ch-zrh|gb-lon|gb-mnc|us-dal|us-lax|us-sea)' | grep -E '(001|201|101|beta-got-1|beta-sto-1|401|501)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
+        else
+            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg|beta)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
+        fi
+
+        # Pick a random country code.
+        size=${#MULLVAD_RELAYS[@]}
+        index=$(($RANDOM % $size))
+        relay=${MULLVAD_RELAYS[$index]}   
         sudo tailscale down
 
-        echo "Applying ntf rules..."
+        echo "[INFO] Restarting tailscale connection..."
+        sudo tailscale down
+        sudo tailscale up
+
+        echo "[INFO] Applying ntf rules..."
         sudo nft -f $SCRIPT_DIR/mullvad.rules
 
-        echo "Connecting to server $relay..."
+        echo "[INFO] Connecting to server $relay..."
+        echo "[INFO] Setting up Mullvad DNS to $DNS..."
+        mullvad dns set custom $DNS
         mullvad relay set hostname $relay
         mullvad connect -w
-        mullvad dns set default
-
-        echo "Connecting to tailscale..."
-        sudo tailscale up
     ;;
 
     *)
         usage
 esac
-
