@@ -6,13 +6,16 @@ The script will connect you to a random available Mullvad server. I will also im
 
 The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was inspired by [this gist](https://gist.github.com/1player/e9cadfef833d5eb5a23c30223f560147).
 
-## Usage
+## Requirements
 
 You should [install mullvad](https://mullvad.net/download/) in your system so you have the [mullvad cli](https://mullvad.net/en/help/how-use-mullvad-cli/) command available.
 
 You will also neeed `nftables` package installed.
 
----
+Finally, you need `tailscale` with its proper setup.
+
+
+## Usage
 
 1. Clone this repo:
 
