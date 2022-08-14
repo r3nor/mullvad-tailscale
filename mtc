@@ -8,29 +8,42 @@ RULES_DIR=$HOME/LINUX/VPN # Path to where mullvad.rules file is located
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid
 # ----------------------------
 
-set -euo pipefail
-DNS='default' # Don't change this. See mtc up -h for more info.
+DNS='default'
 
 usage() {
     echo "usage:"
-    echo "  $(basename "$0") up (use -h for more info)"
+    echo "  $(basename "$0") conf - Configure nftables so Mullvad and Tailscale can work. (use -h for more info)"
+    echo "  $(basename "$0") up  - Connect to Mullvad and Tailscale and configure nftables. (use -h for more info)"
     #echo "  $(basename "$0") upc <2-char country code>"
-    echo "  $(basename "$0") down (use -h for more info)"
+    echo "  $(basename "$0") down - Disconnect from Mullvad only, or Mullvad and Tailscale if -r option enabled. (use -h for more info)"
     exit 1
 }
 
 upusage() {
+    echo "Apply nftables configuration and connect to Mullvad and Tailscale."
     echo "usage: "
     echo "mtc up [-OPTIONS]:"
-    echo "  -r: No-disk/RAM only relays (default: all servers)"
+    echo "  -r: No-disk/RAM only Mullvad relays (default: all servers)"
     echo "  -d: Set custom Mullvad DNS Server"
+    echo "  -h: Show this help message."
     exit 1
 }
 
 downusage() {
+    echo "Bring down Mullvad and remove nftables configuration."
     echo "usage: "
     echo "mtc down [-OPTIONS]:"
     echo "  -a: Stop Mullvad and Tailscale (default: only stop Mullvad)"
+    echo "  -h: Show this help message."
+    exit 1
+}
+
+confusage() {
+    echo "Apply nftables configuration so Mullvad and Tailscale can work together and do nothing more."
+    echo "usage: "
+    echo "mtc conf [-OPTIONS]:"
+    echo "  -d: Remove the nftables configuration."
+    echo "  -h: Show this help message."
     exit 1
 }
 
@@ -46,6 +59,28 @@ case "$1" in
 
         echo "NOT IMPLEMENTED..."
         ;;
+
+    "conf")
+        OPTIND=2   
+        while getopts ":d :h" opt; do
+            case $opt in
+                d) 
+                    echo "[INFO] Removing nftables rules..."
+                    sudo nft delete table inet mullvad-ts
+                    exit 0
+                ;;
+                h) confusage ;;
+                \?) 
+                    echo "[ERROR] WRONG OPTION"
+                    echo ""
+                    confusage
+                    exit 1
+                ;;
+            esac
+        done
+        echo "[INFO] Applying nftables rules..."
+        sudo nft -f $SCRIPT_DIR/mullvad.rules
+    ;;
 
     "down")
         OPTIND=2   
@@ -67,7 +102,7 @@ case "$1" in
         ;;
 
     "up")
-        bash $0 down -a || echo "[INFO] Ignoring error..."
+        bash $0 down -a || echo "Ignoring error..."
         OPTIND=2
         ram=false      
         while getopts ":r :h :d:" opt; do
@@ -104,8 +139,8 @@ case "$1" in
         sudo tailscale down
         sudo tailscale up
 
-        echo "[INFO] Applying ntf rules..."
-        sudo nft -f $RULES_DIR/mullvad.rules
+        echo "[INFO] Applying nft rules..."
+        sudo nft -f $SCRIPT_DIR/mullvad.rules
 
         echo "[INFO] Connecting to server $relay..."
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
@@ -123,4 +158,3 @@ case "$1" in
     *)
         usage
 esac
-
