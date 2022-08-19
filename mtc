@@ -79,7 +79,7 @@ case "$1" in
             esac
         done
         echo "[INFO] Applying nftables rules..."
-        sudo nft -f $SCRIPT_DIR/mullvad.rules
+        sudo nft -f $RULES_DIR/mullvad.rules
     ;;
 
     "down")
@@ -140,7 +140,7 @@ case "$1" in
         sudo tailscale up
 
         echo "[INFO] Applying nft rules..."
-        sudo nft -f $SCRIPT_DIR/mullvad.rules
+        sudo nft -f $RULES_DIR/mullvad.rules
 
         echo "[INFO] Connecting to server $relay..."
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
