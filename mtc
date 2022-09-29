@@ -102,8 +102,6 @@ case "$1" in
         ;;
 
     "up")
-        bash $0 down -a || echo "Ignoring error..."
-        OPTIND=2
         ram=false      
         while getopts ":r :h :d:" opt; do
             case $opt in
@@ -121,7 +119,9 @@ case "$1" in
                 ;;
             esac
         done
-
+        
+        bash $0 down -a || echo "Ignoring error..."
+        OPTIND=2;;
         mullvad relay update
         if [ $ram = true ] ; then
             MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
