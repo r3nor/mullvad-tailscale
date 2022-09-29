@@ -16,7 +16,7 @@ usage() {
     echo "  $(basename "$0") up  - Connect to Mullvad and Tailscale and configure nftables. (use -h for more info)"
     #echo "  $(basename "$0") upc <2-char country code>"
     echo "  $(basename "$0") down - Disconnect from Mullvad only, or Mullvad and Tailscale if -r option enabled. (use -h for more info)"
-    exit 1
+    exit 0
 }
 
 upusage() {
@@ -26,7 +26,7 @@ upusage() {
     echo "  -r: No-disk/RAM only Mullvad relays (default: all servers)"
     echo "  -d: Set custom Mullvad DNS Server"
     echo "  -h: Show this help message."
-    exit 1
+    exit 0
 }
 
 downusage() {
@@ -35,7 +35,7 @@ downusage() {
     echo "mtc down [-OPTIONS]:"
     echo "  -a: Stop Mullvad and Tailscale (default: only stop Mullvad)"
     echo "  -h: Show this help message."
-    exit 1
+    exit 0
 }
 
 confusage() {
@@ -44,7 +44,7 @@ confusage() {
     echo "mtc conf [-OPTIONS]:"
     echo "  -d: Remove the nftables configuration."
     echo "  -h: Show this help message."
-    exit 1
+    exit 0
 }
 
 if [ $# -lt 1 ]; then
@@ -68,14 +68,17 @@ case "$1" in
                     echo "[INFO] Removing nftables rules..."
                     sudo nft delete table inet mullvad-ts
                     exit 0
-                ;;
-                h) confusage ;;
+                    ;;
+                h) 
+                    confusage 
+                    exit 0
+                    ;;
                 \?) 
                     echo "[ERROR] WRONG OPTION"
                     echo ""
                     confusage
                     exit 1
-                ;;
+                    ;;
             esac
         done
         echo "[INFO] Applying nftables rules..."
@@ -93,7 +96,7 @@ case "$1" in
                     echo ""
                     downusage
                     exit 1
-                ;;
+                    ;;
             esac
         done
 
@@ -103,14 +106,12 @@ case "$1" in
 
     "up")
         ram=false      
+        OPTIND=2
         while getopts ":r :h :d:" opt; do
             case $opt in
                 r) ram=true ;;
                 d) DNS=$OPTARG ;;
-                h) 
-                    upusage
-                    exit
-                ;;
+                h) upusage ;;
                 \?) 
                     echo "[ERROR] WRONG OPTION"
                     echo ""
@@ -121,7 +122,6 @@ case "$1" in
         done
         
         bash $0 down -a || echo "Ignoring error..."
-        OPTIND=2;;
         mullvad relay update
         if [ $ram = true ] ; then
             MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
