@@ -20,11 +20,11 @@ The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was ins
 
 ## Requirements
 
-You should [install mullvad](https://mullvad.net/download/) in your system so you have the [mullvad cli](https://mullvad.net/en/help/how-use-mullvad-cli/) command available.
+- [Mullvad](https://mullvad.net/download/) must be installed in your system so you have the [mullvad cli](https://mullvad.net/en/help/how-use-mullvad-cli/) command available.
 
-You will also neeed `nftables` package installed.
+- Install the `nftables` package.
 
-Finally, you need `tailscale` with its proper setup.
+- `tailscale` must be installed and configured with its proper setup.
 
 
 ## Setup
@@ -47,15 +47,17 @@ chmod 700 mtc
 
 4. Inspect and **edit** the script file (`mtc`):
 
-- Change the `RULES_DIR` variable to point to the folder where the `mullvad.rules` file is located.
+- Change the `RULES_DIR` variable to point to the folder where the `mullvad.rules` file from this repository is located. If you cloned the repo, it should be inside the `mullvad-tailscale` folder.
 
-- Modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you don't want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
+- Modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you do not want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
 
 5. Edit the `mullvad.rules` file:
 
 - Set your Tailscale network IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). 
 - Set your Tailscale network IPv6 IPs in the `EXCLUDED_IPV6` variable (you can use CDIR notation). 
-- Set your Tailscale DNS resolver in `RESOLVER_ADDRS` (Should be `100.100.100.100`)
+- Set your Tailscale DNS resolver in `RESOLVER_ADDRS` (Should be `100.100.100.100`).
+
+> You can find the Tailscale IPs in your tailscale dashboard. Just copy and paste for each of your devices.
 
 6. Setup your Mullvad account if you haven't done it yet:
 
