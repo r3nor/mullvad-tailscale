@@ -124,9 +124,9 @@ case "$1" in
 
         mullvad relay update
         if [ $ram = true ] ; then
-            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg|beta)' | grep -E '(de-fra|hk-hkg|jp-tyo|es-mad|got|sto|ch-zrh|gb-lon|gb-mnc|us-dal|us-lax|us-sea|no-svg|se-got)' | grep -E '(001|201|101|401|501)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
+            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
         else
-            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg|beta)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
+            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg)' | awk '{ print $1 }' | grep -Ev $EXCLUDE_COUNTRY_CODES) )
         fi
 
         # Pick a random country code.
