@@ -6,7 +6,7 @@ The script will connect you to a random available Mullvad server.
 
 The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was inspired by [this gist](https://gist.github.com/1player/e9cadfef833d5eb5a23c30223f560147) although it now has been completely rewritten.
 
-If you are using Zerotier, you can also use this script to make it work along with Mullvad. Follow the [Setup](#setup) section to find out how.
+If you are using **Zerotier**, you can also use this script to make it work along with Mullvad. Follow the [Setup](#setup) section to find out how.
 
 ### Features
 
