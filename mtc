@@ -15,7 +15,7 @@ usage() {
     echo "  $(basename "$0") conf - Configure nftables so Mullvad and Tailscale can work. (use -h for more info)"
     echo "  $(basename "$0") up  - Connect to Mullvad and Tailscale and configure nftables. (use -h for more info)"
     #echo "  $(basename "$0") upc <2-char country code>"
-    echo "  $(basename "$0") down - Disconnect from Mullvad only, or Mullvad and Tailscale if -r option enabled. (use -h for more info)"
+    echo "  $(basename "$0") down - Disconnect from Mullvad only, or Mullvad and Tailscale if -a option enabled. (use -h for more info)"
     exit 0
 }
 
