@@ -1,0 +1,282 @@
+#!/bin/env bash
+
+# ---------------------------
+# CONFIG VARIABLES YOU SHOULD CHANGE
+RULES_DIR=$HOME/LINUX/VPN/ # Path to where mullvad.rules file is located IMPORTANT: ADD THE ENDING SLASH FOR THE DIRECTORY. 
+EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid, set to '' for allowing all.
+RULES_FILE="mullvad.rules"
+NFT_TABLENAME="mullvad-ts"
+# ----------------------------
+
+
+usage() {
+    echo "usage: ./$(basename "$0") <action> [options]"
+    printf "\nAction: up\n"
+    upusage
+    echo "-------------------------------------"
+    printf "\nAction: down\n"
+    downusage
+    echo "-------------------------------------"
+    printf "\nAction: conf\n"
+    confusage
+    exit 0
+}
+
+upusage() {
+    echo "Apply nftables configuration and connect to Mullvad and Tailscale/Zerotier."
+    echo ""
+    echo "$(basename "$0") up [-OPTIONS]:"
+    echo "  -h, --help:         Show this help message."
+    echo "  -r, --ram:          No-disk/RAM only Mullvad relays (default: all servers)"
+    echo "  -z, --zerotier:     Use Zerotier instead of Tailscale"
+    echo "  -d, --dns:          Set custom Mullvad DNS Server (i.e. -d 1.1.1.1)"
+    echo "  -c, --country:      Specify a country code to connect to (i.e. -c gb)"
+    echo "  -f, --file:         Specify a particular NFT rules file (default: $RULES_FILE)"
+}
+
+downusage() {
+    echo "Bring down Mullvad and remove nftables configuration."
+    echo ""
+    echo "$(basename "$0") down [-OPTIONS]:"
+    echo "  -h, --help:         Show this help message."
+    echo "  -a, --all:          Stop Mullvad and Tailscale/Zerotier (default: only stop Mullvad)"
+    echo "  -z, --zerotier:     Use Zerotier instead of Tailscale"
+    echo "  -t, --table:        Indicate the nft tablename to bring down (default: $NFT_TABLENAME)"
+}
+
+confusage() {
+    echo "Apply nftables configuration so Mullvad and Tailscale/Zerotier can work together and do nothing more."
+    echo ""
+    echo "$(basename "$0") conf [-OPTIONS]:"
+    echo "  -u: Remove the nftables configuration."
+    echo "  -h: Show this help message."
+}
+
+# Get the action to perform
+actions=("up" "down" "conf")
+if [ ! -z "$1" ]; then
+  action="$1"
+  if [[ ! " ${actions[*]} " =~ " ${action} " ]]; then
+    printf "> USAGE GUIDE <\n\n"
+    usage
+    exit 0
+  fi
+else
+  printf "> USAGE GUIDE <\n\n"
+  usage
+  exit 0
+fi
+
+# Get options and flags
+echo $a
+ARGS=$(getopt -a --options d:f:c:t:auhzr --long "dns:,file:,table:,country:,all,unconf,zerotier,help,ram" -- "$@")
+eval set -- "$ARGS"
+
+help=false
+
+all=false
+unconf=false
+
+zerotier=false
+
+dns=false
+ram=false
+
+country_code=false
+
+while true; do
+  case "$1" in
+    -d|--dns)
+      dns="$2"
+      shift 2;;
+
+    -f|--file)
+      RULES_FILE="$2"
+      RULES_DIR=""
+      shift 2;;
+    
+    -c|--country)
+      country_code="$2"
+      shift 2;;
+
+    -t|--table)
+      NFT_TABLENAME="$2"
+      shift 2;;
+
+    -r|--ram)
+      ram=true
+      shift;;
+
+    -a|--all)
+      all=true
+      shift;;
+
+    -u|--unconf)
+      unconf=true
+      shift;;
+
+    -z|--zerotier)
+      zerotier=true
+      shift;;
+
+    -h|--help)
+      help=true
+      shift;;
+
+    --)
+      break;;
+    *)
+     printf "Unknown option %s\n" "$1"
+     exit 1;;
+  esac
+done
+
+
+case "$action" in
+    "up")
+
+        if [ "$help" = true ]; then
+          upusage
+          exit 0
+        fi
+
+        if $ts ; then
+            bash $0 down -a || echo "Ignoring error..."
+        else
+            bash $0 down -a -z || echo "Ignoring error..."
+        fi
+
+        mullvad relay update
+
+        if [ ! $country_code = false ] ; then
+          MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg)' | awk '{ print $1 }' | grep "$country_code" ) )
+          size=${#MULLVAD_RELAYS[@]}
+          if [ $size -lt 1 ]; then
+            printf "\n[ERROR]: Country code '"$country_code"' is not valid!"
+            exit 1
+          fi
+        else
+          MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg)' | awk '{ print $1 }' | grep -Ev "$EXCLUDE_COUNTRY_CODES") )
+        fi
+
+        if [ $ram = true ] ; then
+            echo "Getting RAM-only servers..."
+            MULLVAD_RELAYS=( $(echo "$MULLVAD_RELAYS" | grep -E '(wg)' | awk '{ print $1 }' ) )
+        fi
+        
+        # Pick a random country code.
+        size=${#MULLVAD_RELAYS[@]}
+        index=$(($RANDOM % $size))
+        relay=${MULLVAD_RELAYS[$index]} 
+
+        if [ "$dns" = false ] ; then
+            mullvad dns set default
+        else
+            echo "[INFO] Setting up Mullvad DNS to "$dns"..."
+            mullvad dns set custom "$dns"
+        fi
+
+        if [ "$zerotier" = false ] ; then
+            echo "[INFO] Restarting tailscale connection..."
+            sudo tailscale down
+            sudo tailscale up
+        else
+            echo "[INFO] Restarting zerotier-one connection..."
+            sudo systemctl start zerotier-one.service
+            sudo systemctl restart zerotier-one.service
+        fi
+
+        if [ "$zerotier" = false ]; then
+            echo "[INFO] Applying nft rules..."
+            sudo nft -f "$RULES_DIR""$RULES_FILE"
+        fi
+
+        if [ "$zerotier" = true ]; then
+            echo "[INFO] Applying nft rules..."
+            # This repetition is necessary. If not used it does not work wiht ZT.
+            # I need to investigate, but this is a workaround for the time being.
+            sudo nft -f "$RULES_DIR""$RULES_FILE"
+            sudo nft add table inet "$NFT_TABLENAME"
+            sleep .5
+            sudo nft delete table inet "$NFT_TABLENAME" 2>/dev/null || echo "[WARN] The table $NFT_TABLENAME does not exist or there is an error."
+            sleep .5
+            sudo nft -f "$RULES_DIR""$RULES_FILE"
+            sudo nft add table inet "$NFT_TABLENAME"
+        fi
+
+        
+        echo "[INFO] Connecting to server "$relay"..."
+        mullvad relay set hostname "$relay"
+        mullvad connect -w
+        mullvad disconnect
+        mullvad connect -w
+
+        if [ "$zerotier" = true ]; then
+            echo "[INFO] Applying nft rules..."
+            # This repetition is necessary. If not used it does not work wiht ZT.
+            # I need to investigate, but this is a workaround for the time being.
+            sudo nft -f "$RULES_DIR""$RULES_FILE"
+            sudo nft add table inet "$NFT_TABLENAME"
+            sleep .5
+            sudo nft delete table inet "$NFT_TABLENAME" 2>/dev/null || echo "[WARN] The table $NFT_TABLENAME does not exist or there is an error."
+            sleep .5
+            sudo nft -f "$RULES_DIR""$RULES_FILE"
+            sudo nft add table inet "$NFT_TABLENAME"
+            
+            sleep 6 &
+            PID=$!
+            i=1
+            echo -n 'Progress: '
+            while [ -d /proc/$PID ]
+            do
+                for s in █ █ █; do echo -ne "$s"; sleep .1; done; 
+            done
+        fi
+
+        
+        if [ "$zerotier" =  true ]; then
+          printf "\n\nDone! You may need to wait a few seconds for the connection to be ready."
+        fi
+        exit 0
+    ;;
+
+    "down")
+      if [ "$help" = true ]; then
+        downusage
+        exit 0
+      fi
+
+      if [ $all = true ]; then
+        if [ "$zerotier" = true ]; then
+          sudo systemctl stop zerotier-one
+          echo "[INFO] Zerotier-one disconnected."
+        else
+          sudo tailscale down
+          echo "[INFO] Tailscale disconnected."
+        fi
+      fi
+      echo "[INFO] Mullvad disconnected..."
+      mullvad disconnect
+      echo "[INFO] Removing nftables config..."
+      sudo nft delete table inet "$NFT_TABLENAME" 2>/dev/null || echo "[WARN] The table $NFT_TABLENAME does not exist or there is an error."
+      echo "[OK]"
+      exit 0
+    ;;
+
+
+    "conf")
+      if [ "$help" = true ]; then
+        confusage
+        exit 0
+      fi
+
+      if [ $unconf = true ]; then
+        sudo nft delete table inet "$NFT_TABLENAME"
+        exit 0
+      fi
+
+      echo "[INFO] Applying nft rules..."
+      sudo nft -f $RULES_DIR/$RULES_FILE
+      exit 0
+    ;;
+esac
