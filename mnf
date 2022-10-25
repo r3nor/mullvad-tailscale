@@ -4,10 +4,13 @@
 # CONFIG VARIABLES YOU SHOULD CHANGE
 RULES_DIR=$HOME/LINUX/VPN/ # Path to where mullvad.rules file is located IMPORTANT: ADD THE ENDING SLASH FOR THE DIRECTORY. 
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid, set to '' for allowing all.
+# ----------------------------
+# ----------------------------
+# CONFIG VARIABLES YOU CAN BUT SHOULD NOT MANUALLY CHANGE
+# It is better to use the flags -f/--file and -t/--table to change this dynamically
 RULES_FILE="mullvad.rules"
 NFT_TABLENAME="mullvad-ts"
 # ----------------------------
-
 
 usage() {
     echo "usage: ./$(basename "$0") <action> [options]"
@@ -31,7 +34,7 @@ upusage() {
     echo "  -z, --zerotier:     Use Zerotier instead of Tailscale"
     echo "  -d, --dns:          Set custom Mullvad DNS Server (i.e. -d 1.1.1.1)"
     echo "  -c, --country:      Specify a country code to connect to (i.e. -c gb)"
-    echo "  -f, --file:         Specify a particular NFT rules file (default: $RULES_FILE)"
+    echo "  -f, --file:          Specify a particular NFT rules file. Indicate path to file (absolute or relative) (default: $RULES_FILE)"
 }
 
 downusage() {
