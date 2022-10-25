@@ -11,6 +11,7 @@ The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was ins
 - [x] See uage and help
 - [x] Bring up Tailscale + Mullvad with a random server
 - [x] Blacklist countries to avoid connecting
+- [x] Whitelist countries to use exclusively 
 - [x] Only use [RAM only servers](https://mullvad.net/en/blog/2022/8/1/expanding-diskless-infrastructure-to-more-locations-system-transparency-stboot/) (diskless)
 - [x] Set custom DNS server for Mullvad
 - [x] Bring down Mullvad VPN and remove nftables entries.
