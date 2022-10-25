@@ -1,10 +1,12 @@
-# mullvad-tailscale
+# mullvad-tailscale (and Zerotier)
 
-This is a simple script that allows you to run MullvadVPN along with Tailscale. 
+This is a simple script that allows you to run MullvadVPN along with Tailscale or Zerotier. 
 
 The script will connect you to a random available Mullvad server.
 
 The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was inspired by [this gist](https://gist.github.com/1player/e9cadfef833d5eb5a23c30223f560147) although it now has been completely rewritten.
+
+If you are using **Zerotier**, you can also use this script to make it work along with Mullvad. Follow the [Setup](#setup) section to find out how.
 
 ### Features
 
@@ -25,7 +27,7 @@ The script is named `mtc` as per `Mullvad Tailscale Connect`. The script was ins
 
 - Install the `nftables` package.
 
-- `tailscale` must be installed and configured with its proper setup.
+- `tailscale` or `zerotier-one` must be installed and configured with its proper setup.
 
 
 ## Setup
@@ -56,11 +58,13 @@ chmod 700 mtc
 
 5. Edit the `mullvad.rules` file:
 
-- Set your Tailscale network IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). 
-- Set your Tailscale network IPv6 IPs in the `EXCLUDED_IPV6` variable (you can use CDIR notation). 
-- Set your Tailscale DNS resolver in `RESOLVER_ADDRS` (Should be `100.100.100.100`).
+- Set your Tailscale/Zerotier network IPs in the `EXCLUDED_IPS` variable (you can use CDIR notation). 
+- Set your Tailscale/Zerotier network IPv6 IPs in the `EXCLUDED_IPV6` variable (you can use CDIR notation), leave it blank if there are no IPv6s. 
+- Set your Tailscale/Zerotier DNS resolver in `RESOLVER_ADDRS` (Should be `100.100.100.100` for Tailscale).
 
-> You can find the Tailscale IPs in your tailscale dashboard. Just copy and paste for each of your devices.
+> You can find the Tailscale/Zerotier IPs in your dashboard. Just copy and paste for each of your devices.
+
+> Note: If you are using Zerotier, the DNS resolver can be found in the `/etc/resolv.conf` file after running `zerotier-one` service. You will find it in a new line, it should look something like `10.X.X.X`.
 
 6. Setup your Mullvad account if you haven't done it yet:
 
@@ -69,6 +73,8 @@ mullvad account set 1234123412341234
 ```
 
 ## Usage
+
+For Zerotier users, only the `mtc conf` command will work. After running the `mtc conf` command, you can then manually start Mullvad. It will also work if Mullvad is already running. This will change in future releases, as I will try to integrate it with both `Zerotier` and `Tailscale`.
 
 > You must be inside the directory where the script is located, or use it with the absolute path to it. If you want to run the command without specifying the folder where it is located, add the script directory to your PATH variable.
 
@@ -87,4 +93,3 @@ mullvad account set 1234123412341234
   - To apply the `nftables` configuration so Mullvad and Tailscale can work and nothing more: `bash mtc conf`
     - To see `conf` help: `bash mtc conf -h`
     - To remove the applied configuration: `bash mtc conf -d
-

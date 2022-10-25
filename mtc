@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Requires: mullvad (cli), nftables and tailscale
 
@@ -88,7 +88,7 @@ case "$1" in
             esac
         done
         echo "[INFO] Applying nftables rules..."
-        sudo nft -f $RULES_DIR/mullvad.rules
+        sudo nft -f "$RULES_DIR"/mullvad.rules
     ;;
 
     "down")
@@ -127,21 +127,22 @@ case "$1" in
             esac
         done
         
-        bash $0 down -a || echo "Ignoring error..."
+        bash "$0" down -a || echo "Ignoring error..."
         mullvad relay update
         if [ $ram = true ] ; then
-            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wg)' | \
+            MULLVAD_RELAYS=( "$(mullvad relay list | grep -E '(wg)' | \
                 awk '{ print $1 }' | grep -E $INCLUDE_COUNTRY_CODES | \
-                grep -Ev $EXCLUDE_COUNTRY_CODES) )
+                grep -Ev $EXCLUDE_COUNTRY_CODES)" )
         else
-            MULLVAD_RELAYS=( $(mullvad relay list | grep -E '(wireguard|wg)' | \
+            MULLVAD_RELAYS=( "$(mullvad relay list | grep -E '(wireguard|wg)' | \
                 awk '{ print $1 }' | grep -E $INCLUDE_COUNTRY_CODES | \
-                grep -Ev $EXCLUDE_COUNTRY_CODES) )
+                grep -Ev $EXCLUDE_COUNTRY_CODES)" )
+
         fi
 
         # Pick a random country code.
         size=${#MULLVAD_RELAYS[@]}
-        index=$(($RANDOM % $size))
+        index=$((RANDOM % size))
         relay=${MULLVAD_RELAYS[$index]}   
         sudo tailscale down
 
@@ -150,16 +151,16 @@ case "$1" in
         sudo tailscale up
 
         echo "[INFO] Applying nft rules..."
-        sudo nft -f $RULES_DIR/mullvad.rules
+        sudo nft -f "$RULES_DIR"/mullvad.rules
 
         echo "[INFO] Connecting to server $relay..."
         echo "[INFO] Setting up Mullvad DNS to $DNS..."
-        if [ $DNS = "default" ] ; then
+        if [ "$DNS" = "default" ] ; then
             mullvad dns set default
         else
-            mullvad dns set custom $DNS
+            mullvad dns set custom "$DNS"
         fi
-        mullvad relay set hostname $relay
+        mullvad relay set hostname "$relay"
         mullvad connect -w
         mullvad disconnect
         mullvad connect -w
