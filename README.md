@@ -7,7 +7,7 @@ This is a simple bash script that will allow you to run MullvadVPN along with Ta
 
 The script is named `mnf` as per `Mullvad NF Tables`. The script was inspired by [this gist](https://gist.github.com/1player/e9cadfef833d5eb5a23c30223f560147), although it now has been completely rewritten and improved.
 
-The script can work with Zerotier and Tailscale. It would most probably also work with any other VPN like NetMaker of Wireguard, but I have not tested it.
+The script can work with Zerotier and Tailscale. It would most probably also work with any other VPN like NetMaker or Wireguard, but I have not tested it.
 
 ## Features
 
@@ -80,6 +80,8 @@ For Zerotier users, you should apply `-z` flag on all `up/down` actions.
 
 > You must be inside the directory where the script is located, or use it with the absolute path to it. If you want to run the command without specifying the folder where it is located, add the script directory to your PATH variable.
 
+[Jump to an example usage](#usage)
+
 ### up
 Apply nftables configuration and connect to Mullvad and Tailscale/Zerotier.
 
@@ -106,3 +108,13 @@ Apply nftables configuration so Mullvad and Tailscale/Zerotier can work together
 - mnf conf [-OPTIONS]:
     - -u: Remove the nftables configuration.
     - -h: Show this help message.
+    
+### Example
+
+`bash ~/LINUX/VPN/mnf.sh up -rz -d 1.1.1.1 -c ee`
+
+or, the same with long flag names:
+
+`bash ~/LINUX/VPN/mnf.sh up --ram --zerotier --dns 1.1.1.1 --country ee`
+
+The command above would set the connection to Mullvad's RAM-only servers (`-r`) and use Zerotier (`-z`). It would also configure the MullvadVPN DNS to `1.1.1.1` as indicated with the `-d` flag. Finally, the selected country would be Estonia as per the Country Code indicated after the `-c` flag.
