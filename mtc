@@ -6,9 +6,11 @@
 # CONFIG VARIABLES YOU SHOULD CHANGE
 RULES_DIR=$HOME/LINUX/VPN # Path to where mullvad.rules file is located
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid
+# Set to '' if no country should be excluded.
 # ----------------------------
 
 DNS='default'
+[ -z "$EXCLUDE_COUNTRY_CODES" ] && EXCLUDE_COUNTRY_CODES='^$'
 
 usage() {
     echo "usage:"

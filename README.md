@@ -51,7 +51,7 @@ chmod 700 mtc
 
 - Change the `RULES_DIR` variable to point to the folder where the `mullvad.rules` file from this repository is located. If you cloned the repo, it should be inside the `mullvad-tailscale` folder.
 
-- Modify the `EXCLUDED_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you do not want to exclude any CC set this variable to `'(0)'`. If you want to add more, just follow the pattern.
+- Modify the `EXCLUDE_COUNTRY_CODES` if you want to exclude any countries from the VPN connection (don't connect to these countries). If you do not want to exclude any CC set this variable to `''`. If you want to add more, just follow the pattern.
 
 5. Edit the `mullvad.rules` file:
 
