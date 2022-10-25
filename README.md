@@ -80,7 +80,7 @@ For Zerotier users, you should apply `-z` flag on all `up/down` actions.
 
 > You must be inside the directory where the script is located, or use it with the absolute path to it. If you want to run the command without specifying the folder where it is located, add the script directory to your PATH variable.
 
-[Jump to an example usage](#usage)
+[Jump to an example usage](#example)
 
 ### up
 Apply nftables configuration and connect to Mullvad and Tailscale/Zerotier.
