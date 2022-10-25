@@ -10,7 +10,6 @@ If you are using **Zerotier**, you can also use this script to make it work alon
 
 ### Features
 
-- [x] See uage and help
 - [x] Bring up Tailscale + Mullvad with a random server
 - [x] Blacklist countries to avoid connecting
 - [x] Only use [RAM only servers](https://mullvad.net/en/blog/2022/8/1/expanding-diskless-infrastructure-to-more-locations-system-transparency-stboot/) (diskless)
@@ -44,7 +43,7 @@ git clone https://github.com/r3nor/mullvad-tailscale
 3. Set execution permissions on script:
 
 ```bash
-chmod 700 mtc
+chmod +x mtc
 ```
 
 4. Inspect and **edit** the script file (`mtc`):
@@ -75,18 +74,16 @@ For Zerotier users, only the `mtc conf` command will work. After running the `mt
 
 > You must be inside the directory where the script is located, or use it with the absolute path to it. If you want to run the command without specifying the folder where it is located, add the script directory to your PATH variable.
 
-  - To see usage help: `bash mtc`
+  - To see usage help: `mtc -h`
+  - To see usage help for any of the subcommands listed below, call it with `-h` (for example: `mtc conf -h`)
   
-  - To start mullvad+tailscale: `bash mtc up`
-    - See `up` help: `bash mtc up -h`
-    - To start mullvad+tailscale with RAM servers only: `bash mtc up -r`
-    - To set a custom DNS for Mullvad: `bash mtc up -d 1.1.1.1`
-    - You can apply all options at once: `bash mtc up -r -d 8.8.8.8`
+  - To start mullvad+tailscale: `mtc up`
+    - To start mullvad+tailscale with RAM servers only: `mtc up -r`
+    - To set a custom DNS for Mullvad: `mtc up -d 1.1.1.1`
+    - You can apply all options at once: `mtc up -r -d 8.8.8.8`
     
-  - To stop mullvad (not tailscale): `bash mtc down`
-    - See `down` help: `bash mtc down -h`
-    - To stop all (tailscale included): `bash mtc down -a`
+  - To stop mullvad (not tailscale): `mtc down`
+    - To stop all (tailscale included): `mtc down -a`
     
-  - To apply the `nftables` configuration so Mullvad and Tailscale can work and nothing more: `bash mtc conf`
-    - To see `conf` help: `bash mtc conf -h`
-    - To remove the applied configuration: `bash mtc conf -d
+  - To apply the `nftables` configuration so Mullvad and Tailscale can work and nothing more: `mtc conf`
+    - To remove the applied configuration: `mtc conf -d`
