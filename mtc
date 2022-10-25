@@ -4,7 +4,7 @@
 
 # ---------------------------
 # CONFIG VARIABLES YOU SHOULD CHANGE
-RULES_DIR=$HOME/Software/git/mullvad-tailscale/ # Path to where mullvad.rules file is located
+RULES_DIR=$HOME/LINUX/VPN/ # Path to where mullvad.rules file is located
 # Only one of the two following variables must be set.
 EXCLUDE_COUNTRY_CODES='(us|ca|jp|au|hk|gb)' # Country codes to avoid.
 # Set to '' if no country should be excluded.
