@@ -166,6 +166,10 @@ up() {
       fi
     done
 
+    # Turn into regex.
+    country_code="$(tr ',' '|' <<<"$INCLUDE_COUNTRY_CODES")"
+    readarray -t MULLVAD_RELAYS < <(printf '%s\n' "${MULLVAD_RELAYS[@]}" | grep -E "^$country_code")
+
   # Exclude countries
   else
     # If EXCLUDE_COUNTRY_CODES is non-null
